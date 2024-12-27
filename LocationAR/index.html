@@ -1,70 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>GeoAR.js Demo</title>
-    <!-- A-Frame and AR.js libraries -->
-    <script src="https://aframe.io/releases/0.9.2/aframe.min.js"></script>
-    <script src="https://raw.githack.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.min.js"></script>
-    <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
-    <script>
-        THREEx.ArToolkitContext.baseURL = 'https://raw.githack.com/jeromeetienne/ar.js/master/three.js/'
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR.js Plantes</title>
+  <script src="https://cdn.jsdelivr.net/npm/ar.js@3.3.2/aframe/build/aframe-ar.min.js"></script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+<body>
+  <h1>Choisissez une plante</h1>
+  <div id="plants-list">
+    <button data-model="models/plant1.glb">Plante 1</button>
+    <button data-model="models/plant2.glb">Plante 2</button>
+    <button data-model="models/plant3.glb">Plante 3</button>
+  </div>
 
-<body style="margin: 0; overflow: hidden;">
+  <div id="ar-view" style="display: none;">
     <a-scene
-        vr-mode-ui="enabled: false"
-        embedded
-        arjs="sourceType: webcam; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;">
-        <a-camera gps-camera rotation-reader></a-camera>
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;">
+      <!-- Détecte un marqueur -->
+      <a-marker preset="hiro" id="marker">
+        <!-- Conteneur pour le modèle 3D -->
+        <a-entity id="model-container" position="0 0 0" scale="0.5 0.5 0.5"></a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
     </a-scene>
+  </div>
 
-    <script>
-        // Initialiser les lieux statiques à charger
-        window.onload = () => {
-            let places = staticLoadPlaces();
-            renderPlaces(places);
-        };
-
-        // Fonction pour charger des lieux statiques
-        function staticLoadPlaces() {
-            return [
-                {
-                    name: 'Magnemite',
-                    location: {
-                        lat: 44.496470,
-                        lng: 11.320180,
-                    }
-                },
-            ];
-        }
-
-        // Fonction pour rendre les objets 3D pour chaque lieu
-        function renderPlaces(places) {
-            let scene = document.querySelector('a-scene');
-
-            places.forEach((place) => {
-                let latitude = place.location.lat;
-                let longitude = place.location.lng;
-
-                // Création de l'entité 3D
-                let model = document.createElement('a-entity');
-                model.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-                model.setAttribute('gltf-model', './assets/magnemite/scene.gltf'); // Assurez-vous que ce modèle est dans le bon répertoire
-                model.setAttribute('rotation', '0 180 0');
-                model.setAttribute('animation-mixer', '');
-                model.setAttribute('scale', '0.5 0.5 0.5');
-
-                // Attente que le modèle soit chargé
-                model.addEventListener('loaded', () => {
-                    window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'));
-                });
-
-                scene.appendChild(model);
-            });
-        }
-    </script>
+  <script src="js/main.js"></script>
 </body>
 </html>
