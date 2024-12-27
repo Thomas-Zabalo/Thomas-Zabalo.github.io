@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>AR.js with Real-Time Location</title>
+    <title>AR.js with Real-Time Location + 1 Meter</title>
 
     <!-- A-Frame and AR.js Libraries -->
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
@@ -38,9 +38,17 @@
                     // Trouver le marqueur dans la scène AR
                     var marker = document.querySelector('#location-marker');
 
-                    // Mettre à jour la position du marqueur en fonction des nouvelles coordonnées
-                    marker.setAttribute('latitude', latitude);
-                    marker.setAttribute('longitude', longitude);
+                    // Déplacer le marqueur AR 1 mètre devant la position GPS
+                    // Pour simplifier, nous allons juste ajuster la position
+                    // en supposant que vous vous déplacez le long de l'axe Z de la scène (distance de 1m devant).
+
+                    // Ajouter 1 mètre à la position actuelle
+                    var newLatitude = latitude + 0.000009  // approx. 1 meter in latitude
+                    var newLongitude = longitude + 0.000009  // approx. 1 meter in longitude
+
+                    // Mettre à jour la position du marqueur avec les nouvelles coordonnées
+                    marker.setAttribute('latitude', newLatitude);
+                    marker.setAttribute('longitude', newLongitude);
                 }, function(error) {
                     console.error("Erreur de géolocalisation: " + error.message);
                 }, {
