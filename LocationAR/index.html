@@ -33,14 +33,17 @@
       <label for="zPositionSlider">Z Position:</label>
       <input type="range" id="zPositionSlider" min="-1" max="1" step="0.01" value="0" />
     </div>
+    <button id="lockPosition" style="margin-top: 10px;">Lock Position</button>
   </div>
 
   <button id="add-model" style="position: absolute; z-index: 50; top: 150px; left: 10px;">Add model</button>
 
   <script>
     let model = null;  // Variable pour stocker le modèle ajouté
+    let positionLocked = false;  // Variable pour vérifier si la position est verrouillée
 
     const button = document.getElementById("add-model");
+    const lockButton = document.getElementById("lockPosition");
 
     button.addEventListener("click", function () {
       // Vérifiez si la géolocalisation est disponible
@@ -78,7 +81,7 @@
     // Fonction pour mettre à jour l'échelle du modèle
     const scaleSlider = document.getElementById("scaleSlider");
     scaleSlider.addEventListener("input", function () {
-      if (model) {
+      if (model && !positionLocked) {
         const scaleValue = scaleSlider.value;
         model.setAttribute("scale", `${scaleValue} ${scaleValue} ${scaleValue}`);
       }
@@ -87,7 +90,7 @@
     // Fonction pour mettre à jour la position X du modèle
     const xPositionSlider = document.getElementById("xPositionSlider");
     xPositionSlider.addEventListener("input", function () {
-      if (model) {
+      if (model && !positionLocked) {
         const xPosition = xPositionSlider.value * 5;  // Multiplicateur pour une plus grande plage de mouvement
         model.setAttribute("position", `${xPosition} 0 0`);
       }
@@ -96,7 +99,7 @@
     // Fonction pour mettre à jour la position Y du modèle
     const yPositionSlider = document.getElementById("yPositionSlider");
     yPositionSlider.addEventListener("input", function () {
-      if (model) {
+      if (model && !positionLocked) {
         const yPosition = yPositionSlider.value * 5;  // Multiplicateur pour une plus grande plage de mouvement
         model.setAttribute("position", `0 ${yPosition} 0`);
       }
@@ -105,9 +108,23 @@
     // Fonction pour mettre à jour la position Z du modèle
     const zPositionSlider = document.getElementById("zPositionSlider");
     zPositionSlider.addEventListener("input", function () {
-      if (model) {
+      if (model && !positionLocked) {
         const zPosition = zPositionSlider.value * 5;  // Multiplicateur pour une plus grande plage de mouvement
         model.setAttribute("position", `0 0 ${zPosition}`);
+      }
+    });
+
+    // Fonction pour verrouiller la position
+    lockButton.addEventListener("click", function () {
+      if (model) {
+        // Verrouille la position en empêchant les changements futurs
+        positionLocked = !positionLocked;
+        lockButton.textContent = positionLocked ? "Unlock Position" : "Lock Position";
+
+        // Si la position est verrouillée, on désactive les sliders de position
+        document.getElementById("xPositionSlider").disabled = positionLocked;
+        document.getElementById("yPositionSlider").disabled = positionLocked;
+        document.getElementById("zPositionSlider").disabled = positionLocked;
       }
     });
   </script>
