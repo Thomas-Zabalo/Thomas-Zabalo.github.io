@@ -15,9 +15,31 @@
     <a-camera id="camera" gps-camera rotation-reader></a-camera>
   </a-scene>
 
-  <button id="add-model" style="position: absolute; z-index: 50; top: 10px; left: 10px;">Add model</button>
+  <!-- Sliders pour contrôler l'échelle et la position -->
+  <div id="controls" style="position: absolute; z-index: 50; top: 10px; left: 10px;">
+    <div>
+      <label for="scaleSlider">Scale:</label>
+      <input type="range" id="scaleSlider" min="0.1" max="3" step="0.1" value="0.5" />
+    </div>
+    <div>
+      <label for="xPositionSlider">X Position:</label>
+      <input type="range" id="xPositionSlider" min="-2" max="2" step="0.1" value="0" />
+    </div>
+    <div>
+      <label for="yPositionSlider">Y Position:</label>
+      <input type="range" id="yPositionSlider" min="-2" max="2" step="0.1" value="0" />
+    </div>
+    <div>
+      <label for="zPositionSlider">Z Position:</label>
+      <input type="range" id="zPositionSlider" min="-2" max="2" step="0.1" value="0" />
+    </div>
+  </div>
+
+  <button id="add-model" style="position: absolute; z-index: 50; top: 150px; left: 10px;">Add model</button>
 
   <script>
+    let model = null;  // Variable pour stocker le modèle ajouté
+
     const button = document.getElementById("add-model");
 
     button.addEventListener("click", function () {
@@ -28,32 +50,18 @@
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
 
-            // Obtenez la direction (rotation) actuelle de la caméra
-            const camera = document.querySelector("#camera");
-            const cameraRotation = camera.getAttribute('rotation');
-            
-            // Calculer un décalage directionnel en fonction de la rotation de la caméra
-            const direction = {
-              x: Math.sin(THREE.MathUtils.degToRad(cameraRotation.y)),
-              z: Math.cos(THREE.MathUtils.degToRad(cameraRotation.y)),
-            };
-
-            // Appliquer un petit décalage (en mètres) en fonction de la direction
-            const offset = 0.0001;  // Ajustez cette valeur en fonction de la distance souhaitée
-            const newLatitude = latitude + direction.z * offset;
-            const newLongitude = longitude + direction.x * offset;
-
-            // Ajoutez dynamiquement un modèle 3D à la scène
+            // Obtenez la scène
             const scene = document.querySelector("a-scene");
 
-            const model = document.createElement("a-entity");
-            model.setAttribute("gltf-model", "./assets/aloe_plant.glb"); // Remplacez par votre chemin vers le modèle 3D
-            model.setAttribute("scale", "0.5 0.5 0.5"); // Ajustez la taille selon votre modèle
+            // Créez un modèle
+            model = document.createElement("a-entity");
+            model.setAttribute("gltf-model", "./assets/aloe_plant.glb"); // Remplacez par votre modèle
+            model.setAttribute("scale", "0.5 0.5 0.5");
             model.setAttribute(
               "gps-entity-place",
-              `latitude: ${newLatitude}; longitude: ${newLongitude}`
+              `latitude: ${latitude + 0.0006}; longitude: ${longitude - 0.0005}`
             );
-            model.setAttribute("look-at", "#camera"); // Oriente le modèle vers la caméra
+            model.setAttribute("look-at", "#camera");
 
             // Ajoutez le modèle à la scène
             scene.appendChild(model);
@@ -64,6 +72,42 @@
         );
       } else {
         console.error("La géolocalisation n'est pas supportée par ce navigateur.");
+      }
+    });
+
+    // Fonction pour mettre à jour l'échelle du modèle
+    const scaleSlider = document.getElementById("scaleSlider");
+    scaleSlider.addEventListener("input", function () {
+      if (model) {
+        const scaleValue = scaleSlider.value;
+        model.setAttribute("scale", `${scaleValue} ${scaleValue} ${scaleValue}`);
+      }
+    });
+
+    // Fonction pour mettre à jour la position X du modèle
+    const xPositionSlider = document.getElementById("xPositionSlider");
+    xPositionSlider.addEventListener("input", function () {
+      if (model) {
+        const xPosition = xPositionSlider.value;
+        model.setAttribute("position", `${xPosition} 0 0`);
+      }
+    });
+
+    // Fonction pour mettre à jour la position Y du modèle
+    const yPositionSlider = document.getElementById("yPositionSlider");
+    yPositionSlider.addEventListener("input", function () {
+      if (model) {
+        const yPosition = yPositionSlider.value;
+        model.setAttribute("position", `0 ${yPosition} 0`);
+      }
+    });
+
+    // Fonction pour mettre à jour la position Z du modèle
+    const zPositionSlider = document.getElementById("zPositionSlider");
+    zPositionSlider.addEventListener("input", function () {
+      if (model) {
+        const zPosition = zPositionSlider.value;
+        model.setAttribute("position", `0 0 ${zPosition}`);
       }
     });
   </script>
