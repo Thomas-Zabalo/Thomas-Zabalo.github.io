@@ -19,10 +19,16 @@
 
   <button id="add-model" style="position: absolute; z-index: 50; top: 10px; left: 10px;">Add model</button>
   <script>
-
+    window.addEventListener("deviceorientation", function (event) {
+      console.log(
+        "z : " + event.alpha + "\n x : " + event.beta + "\n y : " + event.gamma,
+      );
+    });
     const button = document.getElementById("add-model")
 
     button.addEventListener("click", function () {
+
+
       // Vérifiez si la géolocalisation est disponible
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -34,8 +40,8 @@
             const scene = document.querySelector("a-scene");
 
             const model = document.createElement("a-entity");
-            model.setAttribute("gltf-model", "./assets/aloe_plant.glb"); // Remplacez par votre chemin vers le modèle 3D
-            model.setAttribute("scale", "0.5 0.5 0.5"); // Ajustez la taille selon votre modèle
+            model.setAttribute("gltf-model", "./assets/aloe_plant.glb");
+            model.setAttribute("scale", "0.5 0.5 0.5");
             model.setAttribute(
               "gps-entity-place",
               `latitude: ${latitude + 0.0006}; longitude: ${longitude - 0.0005}`
