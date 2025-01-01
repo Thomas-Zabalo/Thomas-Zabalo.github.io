@@ -30,10 +30,10 @@
 
           const model = document.createElement("a-entity");
           model.setAttribute("gltf-model", "./assets/aloe_plant.glb"); // Remplacez par votre chemin vers le modèle 3D
-          model.setAttribute("scale", "2 2 2"); // Ajustez la taille selon votre modèle
+          model.setAttribute("scale", "0.5 0.5 0.5"); // Ajustez la taille selon votre modèle
           model.setAttribute(
             "gps-entity-place",
-            `latitude: ${latitude + 0.0009}; longitude: ${longitude - 0.0009}`
+            `latitude: ${latitude + 0.0006}; longitude: ${longitude - 0.0005}`
           );
           model.setAttribute("look-at", "[gps-camera]"); // Oriente le modèle vers la caméra
 
