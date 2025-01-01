@@ -17,36 +17,43 @@
     <a-camera gps-camera rotation-reader></a-camera>
   </a-scene>
 
+  <button id="add-model">Add model</button>
   <script>
-    // Vérifiez si la géolocalisation est disponible
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
 
-          // Ajoutez dynamiquement un modèle 3D à la scène
-          const scene = document.querySelector("a-scene");
+    const button = document.getElementById("add-model")
 
-          const model = document.createElement("a-entity");
-          model.setAttribute("gltf-model", "./assets/aloe_plant.glb"); // Remplacez par votre chemin vers le modèle 3D
-          model.setAttribute("scale", "0.5 0.5 0.5"); // Ajustez la taille selon votre modèle
-          model.setAttribute(
-            "gps-entity-place",
-            `latitude: ${latitude + 0.0006}; longitude: ${longitude - 0.0005}`
-          );
-          model.setAttribute("look-at", "[gps-camera]"); // Oriente le modèle vers la caméra
+    button.addEventListener("click", function () {
+      // Vérifiez si la géolocalisation est disponible
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
 
-          // Ajoutez le modèle à la scène
-          scene.appendChild(model);
-        },
-        function (error) {
-          console.error("Erreur lors de l'obtention de la position :", error);
-        }
-      );
-    } else {
-      console.error("La géolocalisation n'est pas supportée par ce navigateur.");
-    }
+            // Ajoutez dynamiquement un modèle 3D à la scène
+            const scene = document.querySelector("a-scene");
+
+            const model = document.createElement("a-entity");
+            model.setAttribute("gltf-model", "./assets/aloe_plant.glb"); // Remplacez par votre chemin vers le modèle 3D
+            model.setAttribute("scale", "0.5 0.5 0.5"); // Ajustez la taille selon votre modèle
+            model.setAttribute(
+              "gps-entity-place",
+              `latitude: ${latitude + 0.0006}; longitude: ${longitude - 0.0005}`
+            );
+            model.setAttribute("look-at", "[gps-camera]"); // Oriente le modèle vers la caméra
+
+            // Ajoutez le modèle à la scène
+            scene.appendChild(model);
+          },
+          function (error) {
+            console.error("Erreur lors de l'obtention de la position :", error);
+          }
+        );
+      } else {
+        console.error("La géolocalisation n'est pas supportée par ce navigateur.");
+      }
+    })
+
   </script>
 </body>
 
