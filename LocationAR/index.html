@@ -13,7 +13,7 @@
 
 <body style="margin: 0; overflow: hidden;">
   <a-scene vr-mode-ui="enabled: false" embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-    <!-- La boîte dynamique (ajoutée via JavaScript) -->
+    <!-- Caméra GPS -->
     <a-camera gps-camera rotation-reader></a-camera>
   </a-scene>
 
@@ -25,22 +25,20 @@
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
 
-          // Ajoutez dynamiquement une boîte à la scène
+          // Ajoutez dynamiquement un modèle 3D à la scène
           const scene = document.querySelector("a-scene");
 
-          const box = document.createElement("a-box");
-          box.setAttribute("look-at", "[gps-camera]");
-          box.setAttribute("material", "color: yellow");
-          box.setAttribute("scale", "1 1 1");
-
-          // Ajoutez des coordonnées GPS légèrement décalées
-          box.setAttribute(
+          const model = document.createElement("a-entity");
+          model.setAttribute("gltf-model", "/assets/aloe_plant.glb"); // Remplacez par votre chemin vers le modèle 3D
+          model.setAttribute("scale", "2 2 2"); // Ajustez la taille selon votre modèle
+          model.setAttribute(
             "gps-entity-place",
             `latitude: ${latitude + 0.0009}; longitude: ${longitude - 0.0009}`
           );
+          model.setAttribute("look-at", "[gps-camera]"); // Oriente le modèle vers la caméra
 
-          // Ajoutez la boîte à la scène
-          scene.appendChild(box);
+          // Ajoutez le modèle à la scène
+          scene.appendChild(model);
         },
         function (error) {
           console.error("Erreur lors de l'obtention de la position :", error);
