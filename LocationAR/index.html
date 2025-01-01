@@ -6,29 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>GeoAR.js Demo</title>
   <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-  <script type='text/javascript'
-    src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js'></script>
   <script type='text/javascript' src='https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js'></script>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
   <a-scene vr-mode-ui="enabled: false" embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-    <!-- Caméra GPS -->
-    <a-camera gps-camera rotation-reader></a-camera>
+    <!-- Caméra GPS avec rotation -->
+    <a-camera id="camera" gps-camera rotation-reader></a-camera>
   </a-scene>
 
   <button id="add-model" style="position: absolute; z-index: 50; top: 10px; left: 10px;">Add model</button>
+
   <script>
-    window.addEventListener("deviceorientation", function (event) {
-      console.log(
-        "z : " + event.alpha + "\n x : " + event.beta + "\n y : " + event.gamma,
-      );
-    });
-    const button = document.getElementById("add-model")
+    const button = document.getElementById("add-model");
 
     button.addEventListener("click", function () {
-
-
       // Vérifiez si la géolocalisation est disponible
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -36,16 +28,33 @@
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
 
+            // Obtenez la direction (rotation) actuelle de la caméra
+            const camera = document.querySelector("#camera");
+            const cameraRotation = camera.getAttribute('rotation');
+            
+            // Calculer un décalage directionnel en fonction de la rotation de la caméra
+            const direction = {
+              x: Math.sin(THREE.MathUtils.degToRad(cameraRotation.y)),
+              z: Math.cos(THREE.MathUtils.degToRad(cameraRotation.y)),
+            };
+
+            // Appliquer un petit décalage (en mètres) en fonction de la direction
+            const offset = 0.0001;  // Ajustez cette valeur en fonction de la distance souhaitée
+            const newLatitude = latitude + direction.z * offset;
+            const newLongitude = longitude + direction.x * offset;
+
             // Ajoutez dynamiquement un modèle 3D à la scène
             const scene = document.querySelector("a-scene");
 
             const model = document.createElement("a-entity");
-            model.setAttribute("gltf-model", "./assets/aloe_plant.glb");
-            model.setAttribute("scale", "0.5 0.5 0.5");
+            model.setAttribute("gltf-model", "./assets/aloe_plant.glb"); // Remplacez par votre chemin vers le modèle 3D
+            model.setAttribute("scale", "0.5 0.5 0.5"); // Ajustez la taille selon votre modèle
             model.setAttribute(
               "gps-entity-place",
-              `latitude: ${latitude + 0.0006}; longitude: ${longitude - 0.0005}`
+              `latitude: ${newLatitude}; longitude: ${newLongitude}`
             );
+            model.setAttribute("look-at", "#camera"); // Oriente le modèle vers la caméra
+
             // Ajoutez le modèle à la scène
             scene.appendChild(model);
           },
@@ -56,8 +65,7 @@
       } else {
         console.error("La géolocalisation n'est pas supportée par ce navigateur.");
       }
-    })
-
+    });
   </script>
 </body>
 
